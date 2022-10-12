@@ -14,7 +14,6 @@ def get_matrix(alpha, beta, gamma, num_points):
     row_of_A = np.array([2*alpha+6*beta, (-1)*(alpha+4*beta), beta])
     row_of_A = np.concatenate((row_of_A, np.array([0]*(num_points-5))))
     row_of_A = np.concatenate((row_of_A, np.array([beta, (-1)*(alpha+4*beta)])))
-    #row_of_A = np.concatenate((row_of_A, np.array([0, 0])))
 
     A = np.copy(row_of_A)
     for i in range(1, num_points):

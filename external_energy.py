@@ -7,7 +7,7 @@ def line_energy(image):
     #implement line energy (i.e. image intensity)
     #print("Image shape: ",image.shape)
     #eline = cv2.GaussianBlur(image, (15,15), cv2.BORDER_DEFAULT) ##################################
-    eline = image
+    eline = image.copy()
     return eline
 
 def edge_energy(image):
@@ -16,9 +16,9 @@ def edge_energy(image):
     gx = np.hstack((image[:,1:] - image[:,:-1], image[:,-1].reshape(1,height).T)) # Reshape is used to convert it to a 2D array from 1D array.
     gy = np.vstack((image[:-1,:] - image[1:,:], image[-1,:]))
 
-    #eedge = -1*((gx**2+gy**2)**0.5)
-    eedge = -1*(gx**2+gy**2)
-    eedge = cv2.GaussianBlur(eedge, (5,5), cv2.BORDER_DEFAULT)
+    eedge = -1*((gx**2+gy**2)**0.5)
+    #eedge = -1*(gx**2+gy**2)
+    #eedge = cv2.GaussianBlur(eedge, (3,3), 0)
 
     return eedge
 
@@ -39,7 +39,7 @@ def term_energy(image):
     cxy = np.vstack((cx[:-1,:] - cx[1:,:], cx[-1,:]))
 
     eterm = ((cxx*(cy**2))-(2*cxy*cx*cy)+(cyy*(cx**2)))/((cx**2+cy**2 + 1)**1.5) ####################################################
-    eterm[np.logical_not(eterm > 1)] = 100 ############################################################################################
+    #eterm[np.logical_not(eterm > 1)] = 100 ##########################################################################################
 
     return eterm
 
@@ -54,5 +54,9 @@ def external_energy(image, w_line, w_edge, w_term):
     eterm = term_energy(image)
     #plt.imshow(eterm, cmap='gray')
     #plt.pause(5)
-    e_energy = w_line*eline+w_edge*eedge#+w_term*eterm
+    e_energy = w_line*eline+w_edge*eedge+w_term*eterm
+    print("******external Energy*****")
+    print(np.min(e_energy))
+    print(np.max(e_energy))
+    print("**********************")
     return e_energy
