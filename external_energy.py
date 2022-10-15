@@ -5,8 +5,6 @@ import cv2
 
 def line_energy(image):
     #implement line energy (i.e. image intensity)
-    #print("Image shape: ",image.shape)
-    #eline = cv2.GaussianBlur(image, (15,15), cv2.BORDER_DEFAULT) ##################################
     eline = image.copy()
     return eline
 
@@ -17,8 +15,6 @@ def edge_energy(image):
     gy = np.vstack((image[:-1,:] - image[1:,:], image[-1,:]))
 
     eedge = -1*((gx**2+gy**2)**0.5)
-    #eedge = -1*(gx**2+gy**2)
-    #eedge = cv2.GaussianBlur(eedge, (3,3), 0)
 
     return eedge
 
@@ -38,25 +34,18 @@ def term_energy(image):
 
     cxy = np.vstack((cx[:-1,:] - cx[1:,:], cx[-1,:]))
 
-    eterm = ((cxx*(cy**2))-(2*cxy*cx*cy)+(cyy*(cx**2)))/((cx**2+cy**2 + 1)**1.5) ####################################################
-    #eterm[np.logical_not(eterm > 1)] = 100 ##########################################################################################
+    eterm = ((cxx*(cy**2))-(2*cxy*cx*cy)+(cyy*(cx**2)))/((cx**2+cy**2 + 1)**1.5)
 
     return eterm
 
 def external_energy(image, w_line, w_edge, w_term):
     #implement external energy
     eline = line_energy(image)
-    #plt.imshow(eline, cmap='gray')
-    #plt.pause(5)
+
     eedge = edge_energy(image)
-    #plt.imshow(eedge, cmap='gray')
-    #plt.pause(5)
+
     eterm = term_energy(image)
-    #plt.imshow(eterm, cmap='gray')
-    #plt.pause(5)
+
     e_energy = w_line*eline+w_edge*eedge+w_term*eterm
-    print("******external Energy*****")
-    print(np.min(e_energy))
-    print(np.max(e_energy))
-    print("**********************")
+
     return e_energy

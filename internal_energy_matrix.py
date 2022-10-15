@@ -21,5 +21,4 @@ def get_matrix(alpha, beta, gamma, num_points):
 
     M = A + gamma*np.eye(num_points)
 
-    #return sparse.linalg.inv(sparse.csr_matrix(M))
     return sparse.linalg.spsolve(sparse.csr_matrix(M), np.eye(num_points))

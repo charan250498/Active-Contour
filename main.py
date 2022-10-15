@@ -58,7 +58,6 @@ def interpolate_points():
 def interpolate_circle_for_two_points():
     centre = ((xs[0]+xs[1])/2, (ys[0]+ys[1])/2)
     radius = np.linalg.norm(np.array([xs[0]-centre[0], ys[0]-centre[1]]))
-    #print(radius)
 
     theta = np.linspace(0, 2*np.pi, 300)
     x = centre[0]+radius*np.cos(theta)
@@ -100,9 +99,6 @@ def interpolate_external_energy():
 
     fx_values = []
     fy_values = []
-    #for i in range(num_points):
-    #    fx_values.append(Ex[int(points_y[i]), int(points_x[i])])
-    #    fy_values.append(Ey[int(points_y[i]), int(points_x[i])])
 
     for i in range(num_points):
         fx_values.append(bilinear_interpolate(points_y[i], points_x[i], Ex))
@@ -115,11 +111,10 @@ def interpolate_external_energy():
 
 if __name__ == '__main__':
     #point initialization
-    img_path = '../images/star.png'
+    img_path = '../images/circle.png'
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     temp = np.copy(img)
-    #img = cv2.normalize(img.astype('float'), None, 0.0, 1.0, norm_type=cv2.NORM_MINMAX)
 
     h,w = img.shape
 
@@ -137,22 +132,24 @@ if __name__ == '__main__':
     #interpolate
     #implement part 1: interpolate between the  selected points
     points_x, points_y = interpolate_points() ############################# FOR OTHERS ###############################
-    #points_x, points_y = interpolate_circle_for_two_points() ############################ FOR CIRCLE #############################
+    #points_x, points_y = interpolate_circle_for_two_points() ############################ JUST FOR CIRCLE #############################
 
-    alpha = 0.01
-    beta = 0.1
-    gamma = 1.0
-    kappa = 3.0
+    alpha = 1.0
+    beta = 0.2
+    gamma = 0.4
+    kappa = 0.6
     num_points = len(points_x)
 
     #get matrix
     M = get_matrix(alpha, beta, gamma, num_points)
 
     #get external energy
-    w_line = 0.15 #############################################################
-    w_edge = 1.0 ############################################################
-    w_term = 0.1 #############################################################
+    w_line = 0.001
+    w_edge = 0.2
+    w_term = 0.1 
     E = external_energy(img, w_line, w_edge, w_term)
+
+    max_iter_count = 400
 
     fx_values, fy_values = interpolate_external_energy()
 
@@ -169,7 +166,7 @@ if __name__ == '__main__':
         points_x = points_x.reshape(num_points, 1)
         points_y = points_y.reshape(num_points, 1)
 
-        if iteration_counter > 400:
+        if iteration_counter > max_iter_count:
             break
         else:
             points_x = M @ (gamma*points_x - kappa*fx_values)
@@ -183,6 +180,5 @@ if __name__ == '__main__':
         image = plt.imread(img_path)
         plt.clf()
         plt.imshow(img, cmap='gray')
-        plt.scatter(points_x, points_y, c='g', s=1)
-        #plt.plot(points_x, points_y, c='g')
-        plt.pause(0.0005)
+        plt.scatter(points_x, points_y, c='g', s=3)
+        plt.pause(0.0001)
